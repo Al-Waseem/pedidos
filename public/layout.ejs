@@ -1,0 +1,35 @@
+<Doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title><%= title %></title>
+        <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+        <link type="text/css" href="/css/estilo.css" rel="stylesheet" />
+    </head>
+    <body>
+        <div id="header">
+            <h1><%= title %></h1>
+        </div>
+        <div id="nav">
+            <% if(conectado){ %>
+            <img src="/img/drive.png" />
+            <a href=""><img src="/img/sync.png" title="Sincronizar ahora"/></a>
+            <% }else{ %>
+            <a href=""><img src="/img/drive_bn.png" title="Conectar a la cuenta de drive"/></a>
+            <img src="/img/sync_bn.png" />
+            <% } %>
+        </div>
+        <div id="cuerpo">
+            <div id="contenido">
+                <%- body %>
+            </div>
+            <div id="panel">
+                Compartida
+            </div>
+            <div id="clear"></div>
+        </div>
+        <div id="footer">
+            <span>Victor M Chisvert Amat</span>
+        </div>
+    </body>
+</html>
