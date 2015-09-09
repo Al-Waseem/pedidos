@@ -27,7 +27,7 @@ html, body{
 
 /**********************NAVEGACION****************************************************/
 #nav{
-    height: 30px;
+    height: 30px;    
     border: 1px solid #cccccc;
     background-color: #f5f5f5;
     text-align: right;
@@ -42,7 +42,7 @@ html, body{
 /*****************************CUERPO*************************************************/
 #cuerpo{
     margin-left: 200px;
-    height: 82%;
+    height: 80%;
     background: #ffffff;
 }
 

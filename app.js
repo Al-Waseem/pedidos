@@ -16,7 +16,22 @@ app.set("views engine","ejs");
 app.use(partials());
 app.use(express.static(path.join(__dirname,"public")));
 
+//CORS
+app.use(function(req, res, next) {
+	res.header('Access-Control-Allow-Origin', "*");
+	res.header('Access-Control-Allow-Methods', 'OPTIONS,GET,PUT,POST,DELETE');
+	res.header('Access-Control-Allow-Headers', 'Content-Type');
+	if (req.method == 'OPTIONS') {
+		res.status(200).send();
+	}
+	else {
+		next();
+	}
+});
+
 app.get("/",logica.inicio);
+app.get("/driveAuth",logica.driveAutentificacion);
+app.get("/oauth2callback",logica.driveGuardarAutentificacion);
 
 
 app.listen(port);
