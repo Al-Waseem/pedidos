@@ -8,7 +8,7 @@
         </tr>
         <% for(var i=0;i<users.length;i++){ %>
         <tr>
-            <td><%= users[i].nombre %></td>
+            <td title="<%= users[i].permiso %>"><%= users[i].nombre %></td>
             <td><%= users[i].email %></td>
             <td><img src="/img/editar.png" title="Editar" onclick="Editar(this,'<%= users[i].id %>')" /></td>
             <td><img src="/img/basura.png" title="Borrar" onclick="Borrar(this,'<%= users[i].id %>')" /></td>

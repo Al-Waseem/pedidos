@@ -11,13 +11,14 @@ exports.inicio=function inicio(req,res){
     IniBBDD();
     if(drive.isConnected()){
         global_authDrive=true;
+        drive.comprobarDirectorioDrive(res);
     }
     self.getUsers(res,mostrarUsuarios);
 }
 
 exports.usuarios=function usuarios(req,res){
     if(drive.isConnected()){
-        global_authDrive=true;
+        global_authDrive=true;        
     }
     self.getUsers(res,mostrarUsuarios);
 }
@@ -45,12 +46,10 @@ function IniBBDD(){
         	var SQL="CREATE TABLE ARCHIVOS(id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT UNIQUE, fecha TEXT)";
         	db.run(SQL);
             console.log("Database ARCHIVOS Created");
-            SQL="CREATE TABLE USUARIOS(id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT UNIQUE, email TEXT UNIQUE)";
+            SQL="CREATE TABLE USUARIOS(id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT UNIQUE, email TEXT UNIQUE, permiso TEXT)";
             db.run(SQL);
         	console.log("Database USUARIOS Created");
-            SQL="INSERT INTO USUARIOS (nombre,email) VALUES('Victor','vicchiam81@gmail.com')";
-            db.run(SQL);
-            SQL="INSERT INTO USUARIOS (nombre,email) VALUES('Ana','analladosa87@gmail.com')";
+            SQL="INSERT INTO USUARIOS (nombre,email,permiso) VALUES('Ana','analladosa87@gmail.com','')";
             db.run(SQL);
 	        db.close();
         });
@@ -72,6 +71,10 @@ exports.addUser=function addUser(req,res,callback){
     var db=new sqlite3.Database(FILE_DB);
     var SQL="INSERT INTO USUARIOS(nombre,email) values('"+nombre+"','"+email+"')";
     db.run(SQL,function(err){
+		if(!err){
+			//Comparto la carpeta con el usuario
+			drive.agregarUsuarioCompartido(email,this.lastID,anyadirPermiso);
+		}
         res.send(((err)?"error":""+this.lastID));
     });
 }
@@ -93,4 +96,10 @@ exports.deleteUser=function deleteUser(req,res,callback){
     db.run(SQL,function(err){
         res.send((err)?"error":"ok");
     });
+}
+
+function anyadirPermiso(permiso,id){
+	var db=new sqlite3.Database(FILE_DB);
+    var SQL="UPDATE USUARIOS SET permiso='"+permiso+"' WHERE id='"+id+"'";
+    db.run(SQL);
 }

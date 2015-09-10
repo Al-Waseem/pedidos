@@ -73,7 +73,7 @@ html, body{
 }
 
 #contenido table{
-    min-width: 500px;
+    min-width: 60px;
     margin: 20px;
     text-align: left;
     border-collapse: collapse;
