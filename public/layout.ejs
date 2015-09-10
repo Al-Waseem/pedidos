@@ -5,6 +5,8 @@
         <title><%= title %></title>
         <link href="http://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
         <link type="text/css" href="/css/estilo.css" rel="stylesheet" />
+        <script type="text/javascript" src="/js/jquery-1.11.3.min.js" ></script>
+        <script type="text/javascript" src="/js/script.js" ></script>
     </head>
     <body>
         <div id="header">
@@ -16,7 +18,6 @@
             <a href=""><img src="/img/sync.png" title="Sincronizar ahora"/></a>
             <% }else{ %>
             <a href="/driveAuth"><img src="/img/drive_bn.png" title="Conectar a la cuenta de drive"/></a>
-            <img src="/img/sync_bn.png" />
             <% } %>
         </div>
         <div id="cuerpo">
@@ -24,7 +25,10 @@
                 <%- body %>
             </div>
             <div id="panel">
-                Compartida
+                <ul>
+                    <li><a href="/usuarios"><img src="/img/usuario.png" />Usuarios</a></li>
+                    <li><a href="#"><img src="/img/carpeta.png" />Archivos</a></li>
+                </ul>
             </div>
             <div id="clear"></div>
         </div>

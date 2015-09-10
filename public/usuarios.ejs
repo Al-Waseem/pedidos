@@ -1,0 +1,18 @@
+<h2>Compartir con:</h2>
+<table id="usuarios">
+    <tbody>
+        <tr>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th class="der" colspan="2"><img src="/img/anyadir.png" title="Añadir" onclick="Anyadir()" /></th>
+        </tr>
+        <% for(var i=0;i<users.length;i++){ %>
+        <tr>
+            <td><%= users[i].nombre %></td>
+            <td><%= users[i].email %></td>
+            <td><img src="/img/editar.png" title="Editar" onclick="Editar(this,'<%= users[i].id %>')" /></td>
+            <td><img src="/img/basura.png" title="Borrar" onclick="Borrar(this,'<%= users[i].id %>')" /></td>
+        </tr>
+        <% } %>
+    </tbody>
+</table>

@@ -1,61 +1,96 @@
 var fs=require("fs");
-var google=require("googleapis");
-var googleAuth=require("google-auth-library");
-
-var URI_DRIVE = ['https://www.googleapis.com/auth/drive'];
-var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/.credentials/';
-var TOKEN_PATH_DRIVE = TOKEN_DIR + 'drive-api.json';
-var folder="Pedidos";
-
-
+var sqlite3 = require("sqlite3").verbose();
+var drive=require("./drive");
 
 var global_authDrive=false;
+var FILE_DB="pedidos.db";
+
+var self=this;
 
 exports.inicio=function inicio(req,res){
-    if(fs.existsSync(TOKEN_PATH_DRIVE)){
+    IniBBDD();
+    if(drive.isConnected()){
         global_authDrive=true;
     }
-    res.render("index.ejs",{title:"Pedidos",conectado:global_authDrive});
+    self.getUsers(res,mostrarUsuarios);
 }
 
-/***AUTENTIFICACION DRIVE*************************************************************/
+exports.usuarios=function usuarios(req,res){
+    if(drive.isConnected()){
+        global_authDrive=true;
+    }
+    self.getUsers(res,mostrarUsuarios);
+}
+
+function mostrarUsuarios(res,rows){
+    if(rows==null) rows=[];
+    res.render("usuarios.ejs",{title:"Pedidos",conectado:global_authDrive, users:rows});
+}
+
+/************DRIVE***************************************************************/
 
 exports.driveAutentificacion=function driveAutentificacion(req,res){
-	oauth2Client=getOauth2Client();
-    var authUrl = oauth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: URI_DRIVE
-    });    
-    res.statusCode = 302;
-    res.setHeader("Location", authUrl);
-    res.end();
+    drive.driveAutentificacion(req,res);
 }
 
 exports.driveGuardarAutentificacion=function driveGuardarAutentificacion(req,res){
-    var code=req.query.code;
-    oauth2Client.getToken(code, function(err, token) {
-        oauth2Client.credentials = token;
-        try {
-          fs.mkdirSync(TOKEN_DIR);
-        } catch (err) {
-          if (err.code != 'EEXIST') {
-            throw err;
-          }
-        }
-        fs.writeFile(TOKEN_PATH_DRIVE, JSON.stringify(token));
-        console.log('Token stored to ' + TOKEN_PATH_DRIVE);
-        global_authDrive=true;
-        res.render("index.ejs",{title:"Pedidos",conectado:global_authDrive});
+    drive.driveGuardarAutentificacion(req,res);
+}
+
+/*************BBDD**************************************************************/
+function IniBBDD(){
+    if(!fs.existsSync(FILE_DB)){
+    	var db=new sqlite3.Database(FILE_DB);
+        db.serialize(function() {
+        	var SQL="CREATE TABLE ARCHIVOS(id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT UNIQUE, fecha TEXT)";
+        	db.run(SQL);
+            console.log("Database ARCHIVOS Created");
+            SQL="CREATE TABLE USUARIOS(id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT UNIQUE, email TEXT UNIQUE)";
+            db.run(SQL);
+        	console.log("Database USUARIOS Created");
+            SQL="INSERT INTO USUARIOS (nombre,email) VALUES('Victor','vicchiam81@gmail.com')";
+            db.run(SQL);
+            SQL="INSERT INTO USUARIOS (nombre,email) VALUES('Ana','analladosa87@gmail.com')";
+            db.run(SQL);
+	        db.close();
+        });
+    }
+}
+
+exports.getUsers=function getUsers(res,callback){
+    var db=new sqlite3.Database(FILE_DB);
+    var SQL="SELECT * FROM USUARIOS";
+    db.all(SQL,function(err,rows){
+        callback(res,rows);
+        db.close();
     });
 }
 
-function getOauth2Client(){
-    var content=fs.readFileSync('client_secret.json');
-    var json=JSON.parse(content);
-    var clientId=json.web.client_id;    
-    var clientSecret=json.web.client_secret;
-    var redirectUrl=json.web.redirect_uris[0];    
-    var auth = new googleAuth();
-    var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
-    return oauth2Client;
+exports.addUser=function addUser(req,res,callback){
+    var nombre=req.body.nombre;
+    var email=req.body.email;
+    var db=new sqlite3.Database(FILE_DB);
+    var SQL="INSERT INTO USUARIOS(nombre,email) values('"+nombre+"','"+email+"')";
+    db.run(SQL,function(err){
+        res.send(((err)?"error":""+this.lastID));
+    });
+}
+
+exports.updateUser=function updateUser(req,res,callback){
+    var id=req.body.id;
+    var nombre=req.body.nombre;
+    var db=new sqlite3.Database(FILE_DB);
+    var SQL="UPDATE USUARIOS SET nombre='"+nombre+"' WHERE id='"+id+"'";
+    db.run(SQL,function(err){
+        res.send((err)?"error":"ok");
+    });
+}
+
+exports.deleteUser=function deleteUser(req,res,callback){
+    var id=req.body.id;
+    var db=new sqlite3.Database(FILE_DB);
+    var SQL="DELETE FROM USUARIOS WHERE id='"+id+"'";
+    db.run(SQL,function(err){
+        res.send((err)?"error":"ok");
+    });
 }

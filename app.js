@@ -30,8 +30,14 @@ app.use(function(req, res, next) {
 });
 
 app.get("/",logica.inicio);
+app.get("/usuarios",logica.usuarios);
+
 app.get("/driveAuth",logica.driveAutentificacion);
 app.get("/oauth2callback",logica.driveGuardarAutentificacion);
 
+app.post("/getUsers",logica.getUsers);
+app.post("/addUser",logica.addUser);
+app.post("/updateUser",logica.updateUser);
+app.post("/deleteUser",logica.deleteUser);
 
 app.listen(port);
