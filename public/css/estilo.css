@@ -24,6 +24,12 @@ html, body{
     text-align: right;
 }
 
+.img_drive img{
+    width: 16px !important;
+    height: 16px !important;
+    cursor: auto !important;
+}
+
 /***************************CABECERA************************************************/
 #header{
     min-height: 100px;
@@ -72,17 +78,50 @@ html, body{
     cursor: pointer;
 }
 
+#contenido td a{
+    color: #000000;
+}
+
+#contenido td a:hover{
+    font-weight: bold;
+}
+
 #contenido table{
-    min-width: 60px;
+    min-width: 600px;
     margin: 20px;
     text-align: left;
     border-collapse: collapse;
 }
 
 #contenido td, #contenido th {
-    padding: 10px 40px;
+    padding: 10px 5px;
     border-bottom: 1px solid #cccccc;
 }
+
+#contenido .semaforo{
+    display: block;
+    width: 16px;
+    height: 16px;
+    border-radius: 8px;
+    margin-left: 6px;
+}
+
+#contenido .estado0{
+    background-color: #cccccc;
+}
+
+#contenido .estado1{
+    background-color: #FF8C00;
+}
+
+#contenido .estado2{
+    background-color: #008000;
+}
+
+#contenido .estado-1{
+    background-color: #ff0000;
+}
+
 
 /*********************************PANEL*********************************************/
 #panel{

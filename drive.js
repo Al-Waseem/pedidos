@@ -1,13 +1,14 @@
 var fs=require("fs");
 var google=require("googleapis");
 var googleAuth=require("google-auth-library");
+var mime = require('mime-types')
 
 var URI_DRIVE = ['https://www.googleapis.com/auth/drive'];
 var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/.credentials/';
 var TOKEN_PATH_DRIVE = TOKEN_DIR + 'drive-api.json';
-console.log(TOKEN_PATH_DRIVE);
 
 var FOLDER="AppPedidos";
+var LOCAL_FOLDER="AppPedidos";
 
 global_parent_folder_drive=null;
 
@@ -42,20 +43,16 @@ exports.driveGuardarAutentificacion=function driveGuardarAutentificacion(req,res
         }
         fs.writeFile(TOKEN_PATH_DRIVE, JSON.stringify(token));
         console.log('Token stored to ' + TOKEN_PATH_DRIVE);
-        global_authDrive=true;
         res.redirect("/");
     });
 }
 
 function getOauth2Client(){
-    var content=fs.readFileSync('client_secret.json');    
+    var content=fs.readFileSync('client_secret.json');
     var json=JSON.parse(content);
     var clientId=json.web.client_id;
     var clientSecret=json.web.client_secret;
     var redirectUrl=json.web.redirect_uris[0];
-    /*console.log(clientId);
-    console.log(clientSecret);
-    console.log(redirectUrl);*/
     var auth = new googleAuth();
     var oauth2Client = new auth.OAuth2(clientId, clientSecret, redirectUrl);
     return oauth2Client;
@@ -68,7 +65,7 @@ exports.comprobarDirectorioDrive=function comprobarDirectorioDrive(){
     var oauth2Client=getOauth2Client();
     var token=fs.readFileSync(TOKEN_PATH_DRIVE);
     oauth2Client.credentials = JSON.parse(token);
-    
+
     var items=[];
     var gDrive = google.drive('v2');
     gDrive.files.list(
@@ -76,7 +73,7 @@ exports.comprobarDirectorioDrive=function comprobarDirectorioDrive(){
 			q: " title='"+FOLDER+"' and mimeType='application/vnd.google-apps.folder' ",
             auth: oauth2Client
         },
-        function(err, response) {			
+        function(err, response) {
             if (err) {
                 console.log('The API returned an error: ' + err);
                 return;
@@ -111,7 +108,7 @@ function crearDirectorioDrive(){
         },
         function(err, response) {
             if(!err){
-                global_parent_folder_drive=response.id;                
+                global_parent_folder_drive=response.id;
             }
         }
     );
@@ -125,22 +122,22 @@ exports.agregarUsuarioCompartido=function agregarUsuarioCompartido(email,id,call
 		var oauth2Client=getOauth2Client();
 		var token=fs.readFileSync(TOKEN_PATH_DRIVE);
 		oauth2Client.credentials = JSON.parse(token);
-		
+
 		var gDrive=google.drive('v2');
 		gDrive.permissions.insert(
 			{
-				fileId:	global_parent_folder_drive,		
+				fileId:	global_parent_folder_drive,
 				resource: {
-					"value": email,
-					"type": "user",
-					"role": "writer"
+					value: email,
+					type: "user",
+					role: "writer"
 				},
 				auth: oauth2Client
 			},
 			function(err, response) {
 				if(!err){
-					var permiso=response.id;					
-					callback(permiso,id);        
+					var permiso=response.id;
+					callback(permiso,id);
 				}
 			}
 		);
@@ -152,18 +149,144 @@ exports.eliminarUsuarioCompartido=function eliminarUsuarioCompartido(permiso){
 		var oauth2Client=getOauth2Client();
 		var token=fs.readFileSync(TOKEN_PATH_DRIVE);
 		oauth2Client.credentials = JSON.parse(token);
-		
+
 		var gDrive=google.drive('v2');
-		gDrive.permissions.insert(
+		gDrive.permissions.delete(
 			{
-				fileId:	global_parent_folder_drive,		
+				fileId:	global_parent_folder_drive,
 				permissionId:permiso,
 				auth: oauth2Client
 			},
 			function(err, response) {
-				console.log(response);				
+                if(err){
+                    console.log(err);
+                }
 			}
 		);
 	}
 }
 
+
+/**********************GESTION FICHEROS***************************************/
+
+exports.listarDrive=function listarDrive(res,callback,opcion) {
+    console.log("LISTAR DRIVE");
+
+    var oauth2Client=getOauth2Client();
+    var token=fs.readFileSync(TOKEN_PATH_DRIVE);
+    oauth2Client.credentials = JSON.parse(token);
+    var items=[];
+
+    var gDrive = google.drive('v2');
+    gDrive.files.list(
+        {
+            auth: oauth2Client,
+            q: '"' + global_parent_folder_drive + '" in parents'
+        },
+        function(err, response) {
+            if (err) {
+                console.log('The API returned an error: ' + err);
+                return;
+            }
+            items=response.items
+            callback(res,items,opcion);
+        }
+    );
+}
+
+exports.insertarDrive=function insertarDrive(archivos,res,cont,callback){
+    console.log("INSERTAR DRIVE");
+    var file=archivos[cont];
+
+    var oauth2Client=getOauth2Client();
+    var token=fs.readFileSync(TOKEN_PATH_DRIVE);
+    oauth2Client.credentials = JSON.parse(token);
+
+    var buff=fs.createReadStream(LOCAL_FOLDER+"/"+file.nombre);
+    var mimeType=mime.lookup(file.nombre) || 'application/octet-stream';
+
+    var gDrive=google.drive('v2');
+    gDrive.files.insert(
+        {
+            resource: {
+                title: file.nombre,
+                mimeType: mimeType,
+                parents: [{"id":global_parent_folder_drive}]
+            },
+            media: {
+                mimeType: mimeType,
+                body: buff
+            },
+            auth: oauth2Client
+        },
+        function(err, response) {
+            if (err) {
+                console.log('The API returned an error: ' + err);
+            }
+
+            cont++;
+            callback(archivos,res,cont,callback);
+        }
+    );
+}
+
+exports.actualizarDrive=function actualizarDrive(archivos,res,cont,callback){
+    console.log("ACTUALIZAR DRIVE");
+    var file=archivos[cont];
+
+    var oauth2Client=getOauth2Client();
+    var token=fs.readFileSync(TOKEN_PATH_DRIVE);
+    oauth2Client.credentials = JSON.parse(token);
+
+    var buff=fs.createReadStream(LOCAL_FOLDER+"/"+file.nombre);
+    var mimeType=mime.lookup(file.nombre) || 'application/octet-stream';
+
+    var gDrive=google.drive('v2');
+    gDrive.files.update(
+        {
+            fileId: file.id,
+            resource: {
+                title: file.nombre,
+                mimeType: mimeType
+            },
+            media: {
+                mimeType: mimeType,
+                body: buff
+            },
+            auth: oauth2Client
+        },
+        function(err, response) {
+            if (err) {
+                console.log('The API returned an error: ' + err);
+            }
+
+            cont++;
+            callback(archivos,res,cont,callback);
+        }
+    );
+}
+
+exports.eliminarDrive=function eliminarDrive(archivos,res,cont,callback){
+    console.log("ELIMINAR DRIVE");
+    var file=archivos[cont];
+
+    var oauth2Client=getOauth2Client();
+    var token=fs.readFileSync(TOKEN_PATH_DRIVE);
+    oauth2Client.credentials = JSON.parse(token);
+
+    var gDrive=google.drive('v2');
+    gDrive.files.delete(
+        {
+            fileId: file.id,
+            auth: oauth2Client
+        },
+        function(err, response) {
+            if (err) {
+                console.log('The API returned an error: ' + err);
+            }
+
+            cont++;
+            callback(archivos,res,cont,callback);
+        }
+    );
+}

@@ -1,0 +1,28 @@
+<h2>Archivos disponibles:</h2>
+<table>
+    <tbody>
+        <tr>
+            <th colspan="2">Nombre</th>
+            <th>Fecha Modificación</th>
+            <th>Tamaño</th>
+            <th><a href="/sincronizar"><img src="/img/sync.png" title="Sincronizar ahora"/></a></th>
+        </tr>
+        <% for(var i=0;i<items.length;i++) {
+            var f=items[i];
+        %>
+        <tr>
+            <td class="img_drive"><% if(f.img){ %><img src="<%= f.img %>" /><% } %></td>
+            <td>
+            <% if(f.link){ %>
+                <a href="<%= f.link %>" target="_blank"><%= f.nombre %><a>
+            <% }else{ %>
+                <%= f.nombre %>
+            <% } %>
+            </td>
+            <td><%= f.fechaFormato %></td>
+            <td><%= Math.ceil(f.tamanyo/1024)  %> Kb</td>
+            <td><span class="semaforo estado<%= f.estado %>"></span></td>
+        </tr>
+        <% } %>
+    </tbody>
+</table>
