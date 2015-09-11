@@ -5,6 +5,7 @@ var googleAuth=require("google-auth-library");
 var URI_DRIVE = ['https://www.googleapis.com/auth/drive'];
 var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + '/.credentials/';
 var TOKEN_PATH_DRIVE = TOKEN_DIR + 'drive-api.json';
+console.log(TOKEN_PATH_DRIVE);
 
 var FOLDER="AppPedidos";
 
@@ -67,14 +68,15 @@ exports.comprobarDirectorioDrive=function comprobarDirectorioDrive(){
     var oauth2Client=getOauth2Client();
     var token=fs.readFileSync(TOKEN_PATH_DRIVE);
     oauth2Client.credentials = JSON.parse(token);
+    
     var items=[];
     var gDrive = google.drive('v2');
     gDrive.files.list(
         {
-            auth: oauth2Client,
-            q: "title='"+FOLDER+"' and mimeType='application/vnd.google-apps.folder'"
+			q: " title='"+FOLDER+"' and mimeType='application/vnd.google-apps.folder' ",
+            auth: oauth2Client
         },
-        function(err, response) {
+        function(err, response) {			
             if (err) {
                 console.log('The API returned an error: ' + err);
                 return;
@@ -125,20 +127,41 @@ exports.agregarUsuarioCompartido=function agregarUsuarioCompartido(email,id,call
 		oauth2Client.credentials = JSON.parse(token);
 		
 		var gDrive=google.drive('v2');
-		gDrive.permissions.insert({
-			fileId:	global_parent_folder_drive,		
-			resource: {
-				"value": email,
-				"type": "user",
-				"role": "writer"
-			},
-			auth: oauth2Client
+		gDrive.permissions.insert(
+			{
+				fileId:	global_parent_folder_drive,		
+				resource: {
+					"value": email,
+					"type": "user",
+					"role": "writer"
+				},
+				auth: oauth2Client
 			},
 			function(err, response) {
 				if(!err){
 					var permiso=response.id;					
 					callback(permiso,id);        
 				}
+			}
+		);
+	}
+}
+
+exports.eliminarUsuarioCompartido=function eliminarUsuarioCompartido(permiso){
+	if(global_parent_folder_drive!=null){
+		var oauth2Client=getOauth2Client();
+		var token=fs.readFileSync(TOKEN_PATH_DRIVE);
+		oauth2Client.credentials = JSON.parse(token);
+		
+		var gDrive=google.drive('v2');
+		gDrive.permissions.insert(
+			{
+				fileId:	global_parent_folder_drive,		
+				permissionId:permiso,
+				auth: oauth2Client
+			},
+			function(err, response) {
+				console.log(response);				
 			}
 		);
 	}

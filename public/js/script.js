@@ -78,10 +78,10 @@ function Actualizar(e,id){
     );
 }
 
-function Borrar(e,id){
+function Borrar(e,id,permiso){
     if(confirm("¿Seguro que lo deseas borrar?")){
         $.post( "/deleteUser",
-            { id: id },
+            { id: id, permiso: permiso },
             function(resp){
                 if(resp=="error"){
                     alert("No se ha podido borrar");

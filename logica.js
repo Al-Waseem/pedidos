@@ -13,7 +13,7 @@ exports.inicio=function inicio(req,res){
         global_authDrive=true;
         drive.comprobarDirectorioDrive(res);
     }
-    self.getUsers(res,mostrarUsuarios);
+    self.getUsers(res,mostrarUsuarios);    
 }
 
 exports.usuarios=function usuarios(req,res){
@@ -91,6 +91,8 @@ exports.updateUser=function updateUser(req,res,callback){
 
 exports.deleteUser=function deleteUser(req,res,callback){
     var id=req.body.id;
+    var permiso=req.body.permiso;
+    drive.eliminarUsuarioCompartido(permiso);
     var db=new sqlite3.Database(FILE_DB);
     var SQL="DELETE FROM USUARIOS WHERE id='"+id+"'";
     db.run(SQL,function(err){
