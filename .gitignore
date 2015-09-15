@@ -2,3 +2,4 @@ node_modules
 client_secret.json
 pedidos.db
 AppPedidos
+mail.json

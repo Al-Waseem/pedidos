@@ -10,8 +10,8 @@
         <tr>
             <td><%= users[i].nombre %></td>
             <td><%= users[i].email %></td>
-            <td><img src="/img/editar.png" title="Editar" onclick="Editar(this,'<%= users[i].id %>','<%= users[i].permiso %>')" /></td>
-            <td><img src="/img/basura.png" title="Borrar" onclick="Borrar(this,'<%= users[i].id %>','<%= users[i].permiso %>')" /></td>
+            <td class="der"><img src="/img/editar.png" title="Editar" onclick="Editar(this,'<%= users[i].id %>','<%= users[i].permiso %>')" /></td>
+            <td class="der"><img src="/img/basura.png" title="Borrar" onclick="Borrar(this,'<%= users[i].id %>','<%= users[i].permiso %>')" /></td>
         </tr>
         <% } %>
     </tbody>

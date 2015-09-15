@@ -44,6 +44,10 @@ html, body{
     padding-top: 15px;
 }
 
+#header a{
+    color: #ffffff;
+}
+
 /**********************NAVEGACION****************************************************/
 #nav{
     height: 30px;
