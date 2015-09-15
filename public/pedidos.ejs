@@ -1,1 +1,19 @@
 <h2>Pedidos</h2>
+<table>
+    <tbody>
+        <tr>
+            <td>ID</td>
+            <td>ID_MSG</td>
+            <td>MAIL</td>
+            <td>CSV</td>
+        </tr>
+        <% for(var i=0;i<datos.length;i++){ %>
+        <tr>
+            <td><%= datos[i].id %></td>
+            <td><%= datos[i].id_correo %></td>
+            <td><%= datos[i].email %></td>
+            <td><%= datos[i].csv %></td>
+        </tr>
+        <% } %>
+    </tbody>
+</table>

@@ -30,6 +30,7 @@ app.use(function(req, res, next) {
 });
 
 app.get("/",logica.inicio);
+app.get("/pedidos",logica.pedidos);
 app.get("/usuarios",logica.usuarios);
 app.get("/archivos",logica.archivos);
 
