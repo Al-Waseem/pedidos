@@ -98,3 +98,46 @@ function Borrar(e,id,permiso){
 function Cancelar(e){
     $(e).parent().parent().remove();
 }
+
+
+function AbrirConfig(){	
+	$("#modal").show();
+	$("#ventana").show();
+}
+
+function CerrarConf(){
+	$("#modal").hide();
+	$("#ventana").hide();
+}
+
+function ComprobarCorreo(){
+    var mail=$("#c_email").val();
+    var regex=/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
+    if(!mail.match(regex)){
+        alert("El formato del email no es correcto");
+        return;
+    }
+    var pass=$("#c_pass").val();    
+    if(mail==""){
+		alert("Debes indicar un email");
+		return;
+	}
+	if(pass==""){
+		alert("Debes indicar una contraseña");
+		return;
+	}
+    $.post( "/comprobarMail",
+        { 
+			mail: mail, 
+			pass: pass 
+		},
+        function(resp){
+            if(resp=="error"){
+                alert("Mail no valido");
+            }
+            else{
+                alert("Mail valido");               
+            }
+        }
+    );
+}
