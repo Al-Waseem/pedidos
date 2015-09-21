@@ -118,6 +118,9 @@ function ComprobarCorreo(){
         return;
     }
     var pass=$("#c_pass").val();    
+    var host=$("#c_host").val();
+    var port=$("#c_port").val();
+    var tls=($("#c_tls").checked)?"1":"0";
     if(mail==""){
 		alert("Debes indicar un email");
 		return;
@@ -126,10 +129,22 @@ function ComprobarCorreo(){
 		alert("Debes indicar una contraseña");
 		return;
 	}
-    $.post( "/comprobarMail",
+	if(host==""){
+		alert("Debes indicar un servidor de correo");
+		return;
+	}
+	if(port=""){
+		alert("Debes indicar un puerto");
+		return;
+	}	
+	
+    $.post("/comprobarMail",
         { 
 			mail: mail, 
-			pass: pass 
+			pass: pass,
+			host:host,
+			port:port,
+			tls:tls 
 		},
         function(resp){
             if(resp=="error"){

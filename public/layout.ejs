@@ -42,6 +42,7 @@
         </div>
         <div id="ventana" style="display:none">
 			<img src="/img/close.png" onclick="CerrarConf()" />
+			<h4>Cuenta de correo donde se leerán los pedidos</h4>
 			<table style="width:100%;height:80%">
 				<tr>
 					<td>
@@ -56,7 +57,31 @@
 						<label for="c_pass">Contraseña</label>
 					</td>
 					<td>
-						<input type="pass" id="c_pass" value="" />
+						<input type="password" id="c_pass" value="" />
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label for="c_host">Servidor Imap</label>
+					</td>
+					<td>
+						<input type="input" id="c_host" value="imap.gmail.com"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label for="c_port">Puerto</label>
+					</td>
+					<td>
+						<input type="numeric" id="c_port" value="993"/>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						<label for="c_tls">TLS</label>	
+					</td>
+					<td>				
+						<input type="checkbox" id="c_tls" checked="true"/>
 					</td>
 				</tr>
 				<tr>

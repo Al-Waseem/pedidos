@@ -125,3 +125,49 @@ function procesarAdjunto(adjunto,dir_mail,fecha,callback) {
         });
     };
 }
+
+exports.comprobarMail=function comprobarMail(req,res){
+	var mail=req.body.mail;
+	var pass=req.body.pass;
+	var host=req.body.host;
+	var port=req.body.port;
+	var tls=(req.body.tls=="1");
+	
+	
+	
+	console.log(mail+" -- "+pass+" -- "+tls);
+	
+	var imap = new Imap({
+        user: mail,
+        password: pass,
+        host: host,
+        port: port,
+        tls: tls
+    });
+    
+	imap.once('ready', function() {
+        imap.openBox('INBOX', false, function(err, box) {
+			if(!err){
+				responderComprobacionMail(res,"ok");
+			}
+			else{
+				responderComprobacionMail(res,"error");
+			}
+		});
+	});
+
+	imap.once('error', function(err) {
+		responderComprobacionMail(res,"error");
+	});
+
+	imap.once('end', function() {
+		//responderComprobacionMail(res,"error");
+	});
+
+	imap.connect();
+}
+
+function responderComprobacionMail(res,resp){
+	console.log(resp);
+	res.send(resp);
+}

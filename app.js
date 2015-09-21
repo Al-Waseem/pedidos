@@ -44,4 +44,6 @@ app.post("/deleteUser",logica.deleteUser);
 
 app.get("/sincronizar",logica.sincronizarArchivos);
 
+app.post("/comprobarMail",logica.comprobarMail);
+
 app.listen(port);

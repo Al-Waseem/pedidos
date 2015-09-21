@@ -213,3 +213,9 @@ function sincronizar(archivos,res,cont,callback){
         res.redirect("/archivos");
     }
 }
+
+/******************MAIL******************************/
+
+exports.comprobarMail=function comprobarMail(req,res){
+		mail.comprobarMail(req,res);
+}
