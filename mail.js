@@ -135,23 +135,26 @@ exports.comprobarMail=function comprobarMail(req,res){
 	
 	
 	
-	console.log(mail+" -- "+pass+" -- "+tls);
+	//console.log(host+" --- "+port+" --- "+mail+" -- "+pass+" -- "+tls+" --- "+req.body.port);
+	
+	var obj={host:host, port:port, mail:mail, pass:pass, tls:tls }	
 	
 	var imap = new Imap({
         user: mail,
         password: pass,
         host: host,
         port: port,
-        tls: tls
+        tls: req.body.tls
     });
     
 	imap.once('ready', function() {
         imap.openBox('INBOX', false, function(err, box) {
 			if(!err){
-				responderComprobacionMail(res,"ok");
+				responderComprobacionMail(res,"ok",obj);
 			}
 			else{
-				responderComprobacionMail(res,"error");
+				responderComprobacionMail(res,"error",obj);
+				console.log(err+""+box);
 			}
 		});
 	});
@@ -167,7 +170,30 @@ exports.comprobarMail=function comprobarMail(req,res){
 	imap.connect();
 }
 
-function responderComprobacionMail(res,resp){
+function responderComprobacionMail(res,resp,obj){
 	console.log(resp);
+	
+	if(resp=="ok"){
+	
+		fs.writeFile("prueba.json", JSON.stringify(obj), function(err) {
+			if(err) {
+			  console.log(err);
+			} else {
+			  console.log("JSON saved to ");
+			}
+		});
+		
+		var obj2={mail:obj.mail};
+		
+		fs.writeFile("AppPedidos/conf.json", JSON.stringify(obj2), function(err) {
+			if(err) {
+			  console.log(err);
+			} else {
+			  console.log("JSON saved to ");
+			}
+		});
+	 
+	}
+	
 	res.send(resp);
 }
