@@ -12,7 +12,12 @@
             <td><%= datos[i].id %></td>
             <td><%= datos[i].id_correo %></td>
             <td><%= datos[i].email %></td>
-            <td  colspan="2"><%= datos[i].csv %></td>
+            <td colspan="2"><% if(datos[i].csv.length>400) { %>
+                    <%= datos[i].csv.substring(0,400)+"...." %>
+                <% }else{ %>
+                    <%= datos[i].csv %>
+                <% } %>
+            %></td>
         </tr>
         <% } %>
     </tbody>
