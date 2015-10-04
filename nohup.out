@@ -1,0 +1,32 @@
+COMPROBAR DIRECTORIO
+ITEMS: 1
+No hay ningun mensaje
+LISTAR DRIVE
+COMPROBAR DIRECTORIO
+ITEMS: 1
+No hay ningun mensaje
+LISTAR DRIVE
+COMPROBAR DIRECTORIO
+ITEMS: 1
+No hay ningun mensaje
+LISTAR DRIVE
+LISTAR DRIVE
+COMPROBAR DIRECTORIO
+ITEMS: 1
+No hay ningun mensaje
+LISTAR DRIVE
+
+http.js:690
+    throw new Error('Can\'t set headers after they are sent.');
+    ^
+Error: Can't set headers after they are sent.
+    at ServerResponse.OutgoingMessage.setHeader (http.js:690:11)
+    at ServerResponse.header (/var/www/vhosts/vicchiam.net/node/apps/pedidos/node_modules/express/lib/response.js:718:10)
+    at ServerResponse.location (/var/www/vhosts/vicchiam.net/node/apps/pedidos/node_modules/express/lib/response.js:835:8)
+    at ServerResponse.redirect (/var/www/vhosts/vicchiam.net/node/apps/pedidos/node_modules/express/lib/response.js:874:8)
+    at Connection.<anonymous> (/var/www/vhosts/vicchiam.net/node/apps/pedidos/mail.js:87:13)
+    at Connection.g (events.js:180:16)
+    at Connection.emit (events.js:92:17)
+    at Socket.<anonymous> (/var/www/vhosts/vicchiam.net/node/apps/pedidos/node_modules/imap/lib/Connection.js:184:10)
+    at Socket.g (events.js:180:16)
+    at Socket.emit (events.js:117:20)

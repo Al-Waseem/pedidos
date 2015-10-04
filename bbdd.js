@@ -1,6 +1,7 @@
 var fs=require("fs");
 var sqlite3 = require("sqlite3").verbose();
 var dateFormat=require("date-format");
+var drive=require("./drive");
 
 var FILE_DB="pedidos.db";
 
@@ -11,9 +12,7 @@ exports.iniBBDD=function iniBBDD(){
         db.serialize(function() {
         	var SQL="CREATE TABLE USUARIOS(id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT UNIQUE, email TEXT UNIQUE, permiso TEXT)";
             db.run(SQL);
-        	console.log("Database USUARIOS Created");
-            SQL="INSERT INTO USUARIOS (nombre,email,permiso) VALUES('Ana','analladosa87@gmail.com','')";
-            db.run(SQL);
+        	console.log("Database USUARIOS Created");            
             SQL="CREATE TABLE PEDIDOS(id INTEGER PRIMARY KEY AUTOINCREMENT, id_correo TEXT UNIQUE, email TEXT, csv TEXT)";
             db.run(SQL);
             console.log("Database PEDIDOS Created");

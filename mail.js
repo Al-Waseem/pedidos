@@ -6,85 +6,89 @@ var base64  = require('base64-stream');
 
 exports.leerMail=function leerMail(res,callback){
 
-    var content=fs.readFileSync('mail.json');
-    var json=JSON.parse(content);
-    console.log(json.data.user+" "+json.data.pass);
+    if(!fs.existsSync("mail.json")){        
+        res.redirect("/pedidos");
+    }
+    else{
+        var content=fs.readFileSync('mail.json');
+        var json=JSON.parse(content);        
 
-    var imap = new Imap({
-        user: json.data.user,
-        password: json.data.pass,
-        host: 'imap.gmail.com',
-        port: 993,
-        tls: true
-    });
+        var imap = new Imap({
+            user: json.mail,
+            password: json.pass,
+            host: json.host,
+            port: json.port,
+            tls: (json.tls=="1")
+        });
 
-    imap.once('ready', function() {
-        imap.openBox('INBOX', false, function(err, box) {
-            if (err) throw err;
-            imap.search([ ['HEADER', 'SUBJECT', 'AppPedidos'],['UNSEEN'] ], function(err, results) {
+        imap.once('ready', function() {
+            imap.openBox('INBOX', false, function(err, box) {
                 if (err) throw err;
-                if(results.length==0){
-                    console.log("No hay ningun mensaje");
-                    res.redirect("/pedidos");
-                    return;
-                }
-                var f = imap.fetch(results, {
-                    struct: true,
-                    bodies: '',
-                    markSeen: true
-                });
-                f.on('message', function (msg, seqno) {
-                    var dir_mail="";
-                    var fecha="";
-                    msg.on('body', function(stream, info) {
-                        var buffer = '';
-                        stream.on('data', function(chunk) {
-                            buffer += chunk.toString('utf8');
-                        });
-                        stream.once('end', function() {
-                            var header=Imap.parseHeader(buffer);
-                            dir_mail=header["return-path"][0];
-                            dir_mail=dir_mail.replace("<","").replace(">","");
-                            fecha=header["date"][0];
-                        });
+                imap.search([ ['HEADER', 'SUBJECT', 'AppPedidos'],['UNSEEN'] ], function(err, results) {
+                    if (err) throw err;
+                    if(results.length==0){
+                        console.log("No hay ningun mensaje");
+                        res.redirect("/pedidos");
+                        return;
+                    }
+                    var f = imap.fetch(results, {
+                        struct: true,
+                        bodies: '',
+                        markSeen: true
                     });
-                    msg.once('attributes', function(attrs) {
-                        var adjuntos = buscarPartesAdjunto(attrs.struct);
-                        for (var i = 0, len=adjuntos.length ; i < len; ++i) {
-                            var adjunto = adjuntos[i];
+                    f.on('message', function (msg, seqno) {
+                        var dir_mail="";
+                        var fecha="";
+                        msg.on('body', function(stream, info) {
+                            var buffer = '';
+                            stream.on('data', function(chunk) {
+                                buffer += chunk.toString('utf8');
+                            });
+                            stream.once('end', function() {
+                                var header=Imap.parseHeader(buffer);
+                                dir_mail=header["return-path"][0];
+                                dir_mail=dir_mail.replace("<","").replace(">","");
+                                fecha=header["date"][0];
+                            });
+                        });
+                        msg.once('attributes', function(attrs) {
+                            var adjuntos = buscarPartesAdjunto(attrs.struct);
+                            for (var i = 0, len=adjuntos.length ; i < len; ++i) {
+                                var adjunto = adjuntos[i];
 
-                              var f = imap.fetch(attrs.uid , { //do not use imap.seq.fetch here
-                                  bodies: [adjunto.partID],
-                                  struct: true
-                              });
+                                  var f = imap.fetch(attrs.uid , { //do not use imap.seq.fetch here
+                                      bodies: [adjunto.partID],
+                                      struct: true
+                                  });
 
-                              f.on('message', procesarAdjunto(adjunto,dir_mail,fecha,callback));
-                          }
-                     });
-                     msg.once('end', function() {
+                                  f.on('message', procesarAdjunto(adjunto,dir_mail,fecha,callback));
+                              }
+                         });
+                         msg.once('end', function() {
 
-                     });
-                });
-                f.once('error', function(err) {
+                         });
+                    });
+                    f.once('error', function(err) {
 
-                });
-                f.once('end', function() {
-                    imap.end();
-                    res.redirect("/pedidos");
+                    });
+                    f.once('end', function() {
+                        imap.end();
+                        res.redirect("/pedidos");
+                    });
                 });
             });
-        });
-  });
+      });
 
-  imap.once('error', function(err) {
+      imap.once('error', function(err) {
+        res.redirect("/pedidos");
+      });
 
-  });
+      imap.once('end', function() {
+        res.redirect("/pedidos");
+      });
 
-  imap.once('end', function() {
-
-  });
-
-  imap.connect();
+      imap.connect();
+  }
 }
 
 function buscarPartesAdjunto(struct, adjuntos) {
@@ -175,7 +179,7 @@ function responderComprobacionMail(res,resp,obj){
 	
 	if(resp=="ok"){
 	
-		fs.writeFile("prueba.json", JSON.stringify(obj), function(err) {
+		fs.writeFile("mail.json", JSON.stringify(obj), function(err) {
 			if(err) {
 			  console.log(err);
 			} else {

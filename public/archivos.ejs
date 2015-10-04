@@ -1,4 +1,9 @@
 <h2>Archivos disponibles:</h2>
+<% if(!conectado){ %>
+		<br />
+		<h3>No se pueden los obtener archivos de Drive, no exsiten las credenciales de autorización</h3>
+		<h3>Obten las credenciales con el icono de Drive</h3>
+<% }else{ %>
 <table>
     <tbody>
         <tr>
@@ -26,3 +31,4 @@
         <% } %>
     </tbody>
 </table>
+<% } %>

@@ -92,7 +92,12 @@ exports.driveGuardarAutentificacion=function driveGuardarAutentificacion(req,res
 }
 
 exports.archivos=function archivos(req,res){
-    drive.listarDrive(res,comprobarArchivos,"mostrar");
+    if(!fs.existsSync(drive.getTokenPathDrive())){
+        res.render("archivos.ejs",{title:"Archivos",conectado:global_authDrive, items:[]});        
+    }
+    else{
+        drive.listarDrive(res,comprobarArchivos,"mostrar");
+    }
 }
 
 exports.sincronizarArchivos=function sincronizarArchivos(req,res){
@@ -136,8 +141,8 @@ function comprobarArchivos(res,archivos_drive,opcion){
                 item.link=drive.alternateLink;
 
                 var fecha_drive=new Date(drive.modifiedDate);
-                var d1=Math.ceil(local.fecha.getTime()/10000);
-                var d2=Math.ceil(fecha_drive.getTime()/10000);
+                var d1=Math.ceil(local.fecha.getTime()/1000);
+                var d2=Math.ceil(fecha_drive.getTime()/1000);
                 if(d1>d2){
                     item.tamanyo=local.tamanyo;
                     item.fecha=local.fecha;

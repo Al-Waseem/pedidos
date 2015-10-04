@@ -12,6 +12,10 @@ var LOCAL_FOLDER="AppPedidos";
 
 global_parent_folder_drive=null;
 
+exports.getTokenPathDrive=function(){
+    return TOKEN_PATH_DRIVE;
+}
+
 exports.isConnected=function isConnected(){
     return fs.existsSync(TOKEN_PATH_DRIVE);
 }
@@ -64,7 +68,7 @@ exports.comprobarDirectorioDrive=function comprobarDirectorioDrive(){
     console.log("COMPROBAR DIRECTORIO");
     var oauth2Client=getOauth2Client();
     var token=fs.readFileSync(TOKEN_PATH_DRIVE);
-    oauth2Client.credentials = JSON.parse(token);
+    oauth2Client.credentials = JSON.parse(token);    
 
     var items=[];
     var gDrive = google.drive('v2');
@@ -77,8 +81,12 @@ exports.comprobarDirectorioDrive=function comprobarDirectorioDrive(){
             if (err) {
                 console.log('The API returned an error: ' + err);
                 return;
-            }
+            }            
+
             var items=response.items;
+
+            console.log("ITEMS: "+items.length);
+
             if(items.length==0){
                 crearDirectorioDrive();
             }
@@ -88,6 +96,9 @@ exports.comprobarDirectorioDrive=function comprobarDirectorioDrive(){
             }
         }
     );
+
+
+
 }
 
 function crearDirectorioDrive(){
