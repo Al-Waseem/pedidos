@@ -28,7 +28,7 @@ function Guardar(e){
                 vistaNormal(e,id,0);
             }
         }
-    );    
+    );
 }
 
 function vistaNormal(e,id,modo){
@@ -100,7 +100,7 @@ function Cancelar(e){
 }
 
 
-function AbrirConfig(){	
+function AbrirConfig(){
 	$("#modal").show();
 	$("#ventana").show();
 }
@@ -110,6 +110,47 @@ function CerrarConf(){
 	$("#ventana").hide();
 }
 
+function AbrirCSV(id){
+    $("#modal").show();
+	$("#ventana2").show();
+    $.post("/obtenerCSV",
+        {
+			id:id
+		},
+        function(resp){
+            var aux=resp.split("\n");
+            var cab="";
+            var lineas="<table><tr><td>Producto</td><td>Precio Und</td><td>Cantidad</td><td>Desc</td><td>Iva</td><td>Total</td></tr>";
+            for(var i=1;i<aux.length-1;i++){
+                var l=aux[i].split(";");
+                if(cab==""){
+                    cab+="Cliente: "+l[12]+"<br />";
+                    cab+="Contacto: "+l[5]+"<br />";
+                    cab+="Mail: "+l[7]+"<br />";
+                    cab+="Tel: "+l[6]+"<br />";
+                    cab+="Direccion: "+l[8]+" "+l[9]+"<br />";
+                }
+                var cantidad=parseFloat(l[13]);
+                var desc=parseFloat(l[14]);
+                var iva=parseFloat(l[15]);
+                var precio=parseFloat(l[20]);
+                var total=(cantidad*precio);
+                var pvp=total*(1-desc)*(1+iva);
+                lineas+="<tr><td>"+l[17]+"</td><td>"+precio+"</td><td>"+cantidad+" "+l[19]+"</td><td>"+(desc*100)+"%</td><td>"+(iva*100)+"% </td><td>"+Math.round(pvp)+" Euros</td></tr>";
+
+            }
+            lineas+="</table>";
+            cab+="<br />"+lineas;
+            $("#csv").html(cab);
+        }
+    );
+}
+
+function CerrarCSV(){
+	$("#modal").hide();
+	$("#ventana2").hide();
+}
+
 function ComprobarCorreo(){
     var mail=$("#c_email").val();
     var regex=/^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/
@@ -117,10 +158,10 @@ function ComprobarCorreo(){
         alert("El formato del email no es correcto");
         return;
     }
-    var pass=$("#c_pass").val();    
+    var pass=$("#c_pass").val();
     var host=$("#c_host").val();
-    var port=$("#c_port").val();    
-    var tls=($("#c_tls").prop("checked"))?"1":"0";    
+    var port=$("#c_port").val();
+    var tls=($("#c_tls").prop("checked"))?"1":"0";
     if(mail==""){
 		alert("Debes indicar un email");
 		return;
@@ -136,22 +177,22 @@ function ComprobarCorreo(){
 	if(port==""){
 		alert("Debes indicar un puerto");
 		return;
-	}	
-	
+	}
+
     $.post("/comprobarMail",
-        { 
-			mail: mail, 
+        {
+			mail: mail,
 			pass: pass,
 			host: host,
 			port: port,
-			tls:tls 
+			tls:tls
 		},
         function(resp){
             if(resp=="error"){
                 alert("Mail no valido");
             }
             else{
-                alert("Mail valido");               
+                alert("Mail valido");
             }
         }
     );

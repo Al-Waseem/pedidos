@@ -15,11 +15,11 @@ var LOCAL_FOLDER="./AppPedidos";
 
 exports.inicio=function inicio(req,res){
     bbdd.iniBBDD();
-    
+
     if (!fs.existsSync(LOCAL_FOLDER)){
 		fs.mkdirSync(LOCAL_FOLDER);
 	}
-    
+
     if(drive.isConnected()){
         global_authDrive=true;
         drive.comprobarDirectorioDrive(res);
@@ -27,8 +27,8 @@ exports.inicio=function inicio(req,res){
     }
     else{
 		res.render("pedidos.ejs",{title:"Pedidos",conectado:global_authDrive, datos:[]});
-	}    
-        
+	}
+
 }
 
 function sincronizarPedidos(email,fecha,csv){
@@ -81,6 +81,10 @@ exports.deleteUser=function deleteUser(req,res,callback){
     bbdd.deleteUser(req,res,callback)
 }
 
+exports.obtenerCSV=function obtenerCSV(req,res){
+    bbdd.obtenerCSV(req,res);
+}
+
 /************DRIVE***************************************************************/
 
 exports.driveAutentificacion=function driveAutentificacion(req,res){
@@ -93,7 +97,7 @@ exports.driveGuardarAutentificacion=function driveGuardarAutentificacion(req,res
 
 exports.archivos=function archivos(req,res){
     if(!fs.existsSync(drive.getTokenPathDrive())){
-        res.render("archivos.ejs",{title:"Archivos",conectado:global_authDrive, items:[]});        
+        res.render("archivos.ejs",{title:"Archivos",conectado:global_authDrive, items:[]});
     }
     else{
         drive.listarDrive(res,comprobarArchivos,"mostrar");

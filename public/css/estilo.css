@@ -215,3 +215,32 @@ html, body{
 	width:30px;
 	cursor:pointer;
 }
+
+#ventana2{
+	position:fixed;
+    top:50px;
+    left:50%;
+    width:800px;
+    height:400px;
+    padding:20px;
+    margin-left:-400px;
+    border:1px solid #000000;
+    background-color:#ffffff;
+    overflow: scroll;
+	border-radius:5px;
+}
+
+#ventana2 img{
+	float:right;
+	width:30px;
+	cursor:pointer;
+}
+
+#ventana2 table{
+    border-collapse: collapse;
+}
+
+#ventana2 td{
+    padding: 2px 5px;
+    border: 1px solid #000;
+}

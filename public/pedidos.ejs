@@ -5,19 +5,14 @@
             <td>ID</td>
             <td>ID_MSG</td>
             <td>MAIL</td>
-            <td colspan="2">CSV</td>
+            <td></td>
         </tr>
         <% for(var i=0;i<datos.length;i++){ %>
         <tr>
             <td><%= datos[i].id %></td>
             <td><%= datos[i].id_correo %></td>
             <td><%= datos[i].email %></td>
-            <td colspan="2"><% if(datos[i].csv.length>400) { %>
-                    <%= datos[i].csv.substring(0,400)+"...." %>
-                <% }else{ %>
-                    <%= datos[i].csv %>
-                <% } %>
-            %></td>
+            <td ><img src="/img/vista.png" onclick="AbrirCSV(<%= datos[i].id %>)" /></td>
         </tr>
         <% } %>
     </tbody>

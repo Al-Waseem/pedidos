@@ -12,7 +12,7 @@ exports.iniBBDD=function iniBBDD(){
         db.serialize(function() {
         	var SQL="CREATE TABLE USUARIOS(id INTEGER PRIMARY KEY AUTOINCREMENT, nombre TEXT UNIQUE, email TEXT UNIQUE, permiso TEXT)";
             db.run(SQL);
-        	console.log("Database USUARIOS Created");            
+        	console.log("Database USUARIOS Created");
             SQL="CREATE TABLE PEDIDOS(id INTEGER PRIMARY KEY AUTOINCREMENT, id_correo TEXT UNIQUE, email TEXT, csv TEXT)";
             db.run(SQL);
             console.log("Database PEDIDOS Created");
@@ -89,5 +89,15 @@ exports.anyadirPedido=function anyadirPedido(email,fecha,csv){
 		if(err){
             console.log(err);
         }
+    });
+}
+
+exports.obtenerCSV=function obtenerCSV(req,res){
+    var id=req.body.id;
+    var db=new sqlite3.Database(FILE_DB);
+    var SQL="SELECT csv FROM PEDIDOS WHERE id="+id+"";
+    db.all(SQL,function(err,rows){
+        res.send(rows[0].csv);
+        db.close();
     });
 }

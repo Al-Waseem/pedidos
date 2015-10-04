@@ -36,11 +36,11 @@
         <div id="footer">
             <span>Victor M Chisvert Amat</span>
         </div>
-       
+
         <div id="modal" style="display:none">
-			
+
         </div>
-        <div id="ventana" style="display:none">			
+        <div id="ventana" style="display:none">
 			<img src="/img/close.png" onclick="CerrarConf()" />
 			<h4>Cuenta de correo donde se leerán los pedidos</h4>
 			<table style="width:100%;height:80%">
@@ -78,9 +78,9 @@
 				</tr>
 				<tr>
 					<td>
-						<label for="c_tls">TLS</label>	
+						<label for="c_tls">TLS</label>
 					</td>
-					<td>				
+					<td>
 						<input type="checkbox" id="c_tls" checked="true"/>
 					</td>
 				</tr>
@@ -89,8 +89,14 @@
 						<input type="button" value="Comprobar" onclick="ComprobarCorreo()" />
 					</td>
 				</tr>
-			</table>			
+			</table>
 		</div>
-        
+        <div id="ventana2" style="display:none">
+			<img src="/img/close.png" onclick="CerrarCSV()" />
+			<h4>Pedido</h4>
+            <div id="csv">
+
+            </div>
+        </div>
     </body>
 </html>
